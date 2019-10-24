@@ -8,14 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.IO;
+using System.Collections;
+
 namespace SerialDebugger
 {
    
+   
     public partial class Form1 : Form
     {
-        public Form1()
+
+
+        Hashtable hasharrange = new Hashtable();
+            public Form1()
         {
             InitializeComponent();
+            foreach (Control item in this.Controls)
+            {
+                item.KeyDown += Form1_KeyDown;
+            }
             Control.CheckForIllegalCrossThreadCalls = false;
         }
         SerialPort serialPort;
@@ -33,9 +44,20 @@ namespace SerialDebugger
             }
             toolStripStatusLabel1.Text = "断开成功";
         }
-
+        void Hasharrange_Save()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in hasharrange.Keys)
+            {
+                sb.Append( (string)item + ":" + (string)hasharrange[item] + "\n");
+            }
+            File.WriteAllText("arrange.tXt", sb.ToString());
+        }
         private void button1_Click(object sender, EventArgs e)
         {
+            hasharrange["COM"] = comboBox1.Text;
+            Hasharrange_Save();
+            
             if (comboBox1.Text == "") return;
             serialPort = new SerialPort(comboBox1.Text);
             try
@@ -69,6 +91,7 @@ namespace SerialDebugger
             {
                 d.Add(new DisplayData() { Name = name, Value = value, DisplayText = $"{name}: {value}" });
             }
+           if(enablelog) File.AppendAllText(name + ".txt", name+":"+value + "\n");
             //listBox1.DisplayMember = "Name";
             //listBox1.Items.Clear();
             // d.ForEach(i => listBox1.Items.Add(i.ToString()));
@@ -103,16 +126,32 @@ namespace SerialDebugger
             }
         }
         List<DisplayData> d = new List<DisplayData>();
+
         private void Form1_Load(object sender, EventArgs e)
         {
             comboBox1.DataSource = SerialPort.GetPortNames();
-            
-         
-           
+            FileStream fs;
+            if (!File.Exists("arrange.txt"))
+            {
+                fs = File.Create("arrange.txt");
+                fs.Close();
+            }
+            string[] arrange = File.ReadAllLines("arrange.txt");
+            for (int i = 0; i < arrange.Length; i++)
+            {
+                if (arrange[i].Trim() == "") break;
+                string[] s = arrange[i].Split(':');
+                hasharrange.Add(s[0], s[1]);
+            }
+            if (hasharrange.ContainsKey("COM"))
+            {
+                comboBox1.Text = hasharrange["COM"].ToString();
+            }
 
-           
+
+
             //listBox1.DisplayMember = "DisplayText";
-            
+
             //listBox1.ValueMember = "Name";
         }
 
@@ -124,6 +163,7 @@ namespace SerialDebugger
         private void label1_Click(object sender, EventArgs e)
         {
             Form1_Load(null, null);
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -134,12 +174,45 @@ namespace SerialDebugger
          //serialPort.
         }
         int i;
+        private bool enablelog;
+
+      
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            enablelog = checkBox1.Checked;
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
-             
-            UpadateData($"123", $"1231{++i}");
-            UpadateData($"123{++i}", $"1231{++i}");
+            serialPort.WriteLine("Forward(100,100)");
         }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Left) serialPort.WriteLine("fwd(-150,150)");
+
+            if (e.KeyCode == Keys.Right) serialPort.WriteLine("fwd(150,-150)");
+            if(e.KeyCode==Keys.Up) serialPort.WriteLine("fwd(150,150)");
+            if (e.KeyCode == Keys.Down) serialPort.WriteLine("fwd(-150,-150)");
+            if (e.KeyCode == Keys.S) serialPort.WriteLine("fwd(0,0)");
+
+        }
+
     }
     class DisplayData
     {
@@ -151,4 +224,5 @@ namespace SerialDebugger
             return $"{Name}: {Value}";
         }
     }
+    
 }
