@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
 using System.Collections;
+using Drawer;
 
 namespace SerialDebugger
 {
@@ -17,20 +18,27 @@ namespace SerialDebugger
    
     public partial class Form1 : Form
     {
-
-
+        List<DisplayData> d = new List<DisplayData>();
         Hashtable hasharrange = new Hashtable();
-            public Form1()
+       public SerialPort serialPort;
+
+
+        public Form1()
         {
             InitializeComponent();
+            Control.CheckForIllegalCrossThreadCalls = false;
+            //注册点击事件
             foreach (Control item in this.Controls)
             {
-                item.KeyDown += Form1_KeyDown;
+               item.KeyDown += Form1_KeyDown;
+                item.KeyUp += (a, b) => { if (b.KeyCode == Keys.Up || b.KeyCode == Keys.Down || b.KeyCode == Keys.Left || b.KeyCode == Keys.Right) serialPort.WriteLine("fwd(0,0)"); };
             }
-            Control.CheckForIllegalCrossThreadCalls = false;
+            
+           
         }
-        SerialPort serialPort;
+   
 
+      
         private void button2_Click(object sender, EventArgs e)
         {
             try
@@ -44,20 +52,57 @@ namespace SerialDebugger
             }
             toolStripStatusLabel1.Text = "断开成功";
         }
+        #region 记忆读取
         void Hasharrange_Save()
         {
             StringBuilder sb = new StringBuilder();
             foreach (var item in hasharrange.Keys)
             {
-                sb.Append( (string)item + ":" + (string)hasharrange[item] + "\n");
+                sb.Append((string)item + ":" + (string)hasharrange[item] + "\n");
             }
             File.WriteAllText("arrange.tXt", sb.ToString());
         }
+        void Hasharrange_Init()
+        {
+            FileStream fs;
+            if (!File.Exists("arrange.txt"))
+            {
+                fs = File.Create("arrange.txt");
+                fs.Close();
+            }
+            string[] arrange = File.ReadAllLines("arrange.txt");
+            for (int i = 0; i < arrange.Length; i++)
+            {
+                if (arrange[i].Trim() == "") break;
+                string[] s = arrange[i].Split(':');
+                hasharrange.Add(s[0], s[1]);
+            }
+
+        }
+        string Hasharrange_Get(string s)
+        {
+            if (hasharrange.ContainsKey(s)) return  hasharrange[s].ToString();
+            return "";
+        }
+        void Hasharrange_Apply()
+        {
+            comboBox1.Text = Hasharrange_Get("COM");
+            textBox5.Text = Hasharrange_Get("Arm1");
+            textBox4.Text = Hasharrange_Get("Arm2");
+
+        }
+        void Hasharrange_SaveChange(string s1 ,string s2)
+        {
+            hasharrange[s1] = s2;
+            Hasharrange_Save();
+        }
+        #endregion
+
         private void button1_Click(object sender, EventArgs e)
         {
-            hasharrange["COM"] = comboBox1.Text;
-            Hasharrange_Save();
-            
+            //hasharrange["COM"] = comboBox1.Text;
+            //Hasharrange_Save();
+            Hasharrange_SaveChange("COM", comboBox1.Text);
             if (comboBox1.Text == "") return;
             serialPort = new SerialPort(comboBox1.Text);
             try
@@ -87,14 +132,13 @@ namespace SerialDebugger
                    
                 }
             });
+
             if (!founded)
             {
                 d.Add(new DisplayData() { Name = name, Value = value, DisplayText = $"{name}: {value}" });
             }
            if(enablelog) File.AppendAllText(name + ".txt", name+":"+value + "\n");
-            //listBox1.DisplayMember = "Name";
-            //listBox1.Items.Clear();
-            // d.ForEach(i => listBox1.Items.Add(i.ToString()));
+            
             listBox1.DataSource = null;
             listBox1.DataSource = d;
         }
@@ -125,28 +169,36 @@ namespace SerialDebugger
                 
             }
         }
-        List<DisplayData> d = new List<DisplayData>();
+       
+
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
+         //   openFileDialog1.ShowDialog();
             comboBox1.DataSource = SerialPort.GetPortNames();
-            FileStream fs;
-            if (!File.Exists("arrange.txt"))
+
+            Hasharrange_Init();
+            Hasharrange_Apply();
+            foreach (var item in groupBox4.Controls)
             {
-                fs = File.Create("arrange.txt");
-                fs.Close();
+                if (!(item is Button))
+                {
+                    continue;
+                }
+                Button btn = (Button)item;
+                int id = Convert.ToInt32(btn.Text[btn.Text.Length - 1].ToString());
+                btn.Tag = id;
+                btn.Click += (a, b) =>
+                {
+                    int cnt =(int) ((Button)a).Tag;
+                    //MessageBox.Show($"fuction{cnt.ToString()}(100,100)");
+                  serialPort.WriteLine($"fuction{cnt.ToString()}(100,100)");
+                };
+
             }
-            string[] arrange = File.ReadAllLines("arrange.txt");
-            for (int i = 0; i < arrange.Length; i++)
-            {
-                if (arrange[i].Trim() == "") break;
-                string[] s = arrange[i].Split(':');
-                hasharrange.Add(s[0], s[1]);
-            }
-            if (hasharrange.ContainsKey("COM"))
-            {
-                comboBox1.Text = hasharrange["COM"].ToString();
-            }
+
 
 
 
@@ -204,16 +256,229 @@ namespace SerialDebugger
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Left) serialPort.WriteLine("fwd(-150,150)");
+            if (e.KeyCode == Keys.Left) serialPort.WriteLine("fwd(-100,100)");
 
-            if (e.KeyCode == Keys.Right) serialPort.WriteLine("fwd(150,-150)");
-            if(e.KeyCode==Keys.Up) serialPort.WriteLine("fwd(150,150)");
-            if (e.KeyCode == Keys.Down) serialPort.WriteLine("fwd(-150,-150)");
-            if (e.KeyCode == Keys.S) serialPort.WriteLine("fwd(0,0)");
+            if (e.KeyCode == Keys.Right) serialPort.WriteLine("fwd(100,-100)");
+            if(e.KeyCode==Keys.Up) serialPort.WriteLine("fwd(100,100)");
+            if (e.KeyCode == Keys.Down) serialPort.WriteLine("fwd(-100,-100)");
+            if (e.KeyCode == Keys.Control) serialPort.WriteLine("fwd(0,0)");
 
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+          //  serialPort.WriteLine($"fwd({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
+            serialPort.WriteLine($"bmpspeed({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+          //  serialPort.WriteLine($"fuckt({Convert.ToInt32(textBox4.Text).ToString()}，2)");
+            serialPort.WriteLine($"amg2({textBox4.Text},{textBox4.Text})");
+            Hasharrange_SaveChange("Arm2", textBox4.Text);
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"glfwd(0,0)");
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"gtm({textBox9.Text},{textBox10.Text})");
+         
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"gllft(0,0)");
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"setz(1,1)");
+
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox10_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                Hasharrange_SaveChange("Arm1", textBox5.Text);
+                serialPort.WriteLine($"amg1({Convert.ToInt32(textBox5.Text).ToString()},2)");
+               
+            }
+            catch (Exception)
+            {
+
+              
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            d.Clear();
+            listBox1.DataSource = null;
+            listBox1.DataSource = d;
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
+        {
+         
+        }
+
+        private void textBox5_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode==Keys.Up)
+            {
+
+            textBox5.Text = (int.Parse(textBox5.Text) + 1).ToString();
+            button10_Click(null, null);
+
+            }
+            if (e.KeyCode == Keys.Down)
+            {
+
+                textBox5.Text = (int.Parse(textBox5.Text) - 1).ToString();
+                button10_Click(null, null);
+
+            }
+        }
+
+        private void textBox4_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                textBox4.Text = (int.Parse(textBox4.Text) + 1).ToString();
+                button5_Click(null, null);
+            }
+            if (e.KeyCode == Keys.Down)
+            {
+                textBox4.Text = (int.Parse(textBox4.Text) - 1).ToString();
+                button5_Click(null, null);
+            }
+        }
+
+        private void button11_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button11_Click_2(object sender, EventArgs e)
+        {
+
+            serialPort.WriteLine($"getball(0,0)");
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+
+            serialPort.WriteLine($"exmaze(0,0)");
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine("getball2(0,0)");
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine("glrt(0,0)");
+        }
+
+        private void textBox11_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"sspeed({textBox9.Text},{textBox11.Text})");
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button17_Click_1(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"glrt(0,0)");
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+
+           Form2 f = new   Drawer.Form2();
+            f.fm1 = this;
+            f.Show();
+        }
+
+        private void button22_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button26_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"abt({textBox6.Text},1)");
+        }
+
+        private void button25_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"relat({textBox6.Text},1)");
+        }
     }
+
     class DisplayData
     {
         public string DisplayText { get; set; }
@@ -224,5 +489,5 @@ namespace SerialDebugger
             return $"{Name}: {Value}";
         }
     }
-    
+     
 }
