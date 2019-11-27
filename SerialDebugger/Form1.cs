@@ -102,6 +102,13 @@ namespace SerialDebugger
         {
             //hasharrange["COM"] = comboBox1.Text;
             //Hasharrange_Save();
+            if (serialPort!=null)
+            {
+                if (serialPort.IsOpen)
+                {
+                    button2_Click(null, null);
+                }
+            }
             Hasharrange_SaveChange("COM", comboBox1.Text);
             if (comboBox1.Text == "") return;
             serialPort = new SerialPort(comboBox1.Text);
@@ -111,9 +118,9 @@ namespace SerialDebugger
                 serialPort.BaudRate = 9600;
                 serialPort.DataReceived += SerialPort_DataReceived;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                toolStripStatusLabel1.Text = "连接失败";
+                toolStripStatusLabel1.Text = "连接失败"+ex.Message;
                 return;
             }
             toolStripStatusLabel1.Text = "连接成功";
@@ -307,6 +314,8 @@ namespace SerialDebugger
 
         private void button8_Click(object sender, EventArgs e)
         {
+            serialPort.WriteLine($"sspeed({textBox9.Text},{textBox11.Text})");
+            System.Threading.Thread.Sleep(300);
             serialPort.WriteLine($"gtm({textBox9.Text},{textBox10.Text})");
          
         }
@@ -476,6 +485,72 @@ namespace SerialDebugger
         private void button25_Click(object sender, EventArgs e)
         {
             serialPort.WriteLine($"relat({textBox6.Text},1)");
+        }
+
+        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                textBox9.Text = 150.ToString();
+                textBox11.Text = 150.ToString();
+            }
+        }
+
+        private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                textBox9.Text = (-150).ToString();
+                textBox11.Text = (-150).ToString();
+            }
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton3.Checked)
+            {
+                textBox9.Text = (-150).ToString();
+                textBox11.Text = (150).ToString();
+            }
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton4.Checked)
+            {
+                textBox9.Text = (150).ToString();
+                textBox11.Text = (-150).ToString();
+            }
+
+        }
+
+        private void groupBox4_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button16_Click_1(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"zxx({textBox7.Text},1)");
+            textBox1.Text += $"Outer_GoPointByX({textBox7.Text}, 1);\n";
+        }
+
+        private void button17_Click_2(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"yxx({textBox7.Text},1)");
+            textBox1.Text += $"Outer_GoPointByX({textBox7.Text}, 2);\n";
+        }
+
+        private void button27_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"zxy({textBox7.Text},1)");
+            textBox1.Text += $"Outer_GoPointByY({textBox7.Text}, 1);\n";
+        }
+
+        private void button28_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"yxy({textBox7.Text},1)");
+            textBox1.Text += $"Outer_GoPointByY({textBox7.Text}, 2);\n";
         }
     }
 
