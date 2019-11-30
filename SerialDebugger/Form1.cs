@@ -317,7 +317,8 @@ namespace SerialDebugger
             serialPort.WriteLine($"sspeed({textBox9.Text},{textBox11.Text})");
             System.Threading.Thread.Sleep(300);
             serialPort.WriteLine($"gtm({textBox9.Text},{textBox10.Text})");
-         
+            textBox8.Text += $"Move_GoStraightTime({textBox9.Text},{textBox10.Text});\n";
+
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -485,6 +486,8 @@ namespace SerialDebugger
         private void button25_Click(object sender, EventArgs e)
         {
             serialPort.WriteLine($"relat({textBox6.Text},1)");
+            textBox8.Text += $"Mpu_GoRelativeAngle({textBox6.Text});\n";
+
         }
 
         private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
@@ -532,25 +535,55 @@ namespace SerialDebugger
         private void button16_Click_1(object sender, EventArgs e)
         {
             serialPort.WriteLine($"zxx({textBox7.Text},1)");
-            textBox1.Text += $"Outer_GoPointByX({textBox7.Text}, 1);\n";
+            textBox8.Text += $"Outer_GoPointByX({textBox7.Text}, 1);\n";
         }
 
         private void button17_Click_2(object sender, EventArgs e)
         {
             serialPort.WriteLine($"yxx({textBox7.Text},1)");
-            textBox1.Text += $"Outer_GoPointByX({textBox7.Text}, 2);\n";
+            textBox8.Text += $"Outer_GoPointByX({textBox7.Text}, 2);\n";
         }
 
         private void button27_Click(object sender, EventArgs e)
         {
             serialPort.WriteLine($"zxy({textBox7.Text},1)");
-            textBox1.Text += $"Outer_GoPointByY({textBox7.Text}, 1);\n";
+            textBox8.Text += $"Outer_GoPointByY({textBox7.Text}, 1);\n";
         }
 
         private void button28_Click(object sender, EventArgs e)
         {
             serialPort.WriteLine($"yxy({textBox7.Text},1)");
-            textBox1.Text += $"Outer_GoPointByY({textBox7.Text}, 2);\n";
+            textBox8.Text += $"Outer_GoPointByY({textBox7.Text}, 2);\n";
+        }
+
+        private void button30_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"bal({textBox12.Text},1)");
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button29_Click(object sender, EventArgs e)
+        {
+            textBox8.Text = textBox8.Text.Substring(0, textBox8.Text.LastIndexOf("\n"));
+            textBox8.Text= textBox8.Text.Substring(0, textBox8.Text.LastIndexOf("\n"))+"\n";
+        }
+
+        private void button31_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"sspeed({textBox9.Text},{textBox11.Text})");
+            System.Threading.Thread.Sleep(300);
+            serialPort.WriteLine($"gstm({textBox9.Text},{textBox10.Text})");
+            textBox8.Text += $"Move_GoStraightTime({textBox9.Text}, {textBox10.Text});\n";
+        }
+
+        private void button32_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"relata({textBox6.Text},1)");
+            textBox8.Text += $"Mpu_GoRelativeAngle({textBox6.Text});\n";
         }
     }
 
