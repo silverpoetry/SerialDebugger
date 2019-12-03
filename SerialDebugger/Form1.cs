@@ -585,6 +585,23 @@ namespace SerialDebugger
             serialPort.WriteLine($"relata({textBox6.Text},1)");
             textBox8.Text += $"Mpu_GoRelativeAngle({textBox6.Text});\n";
         }
+
+        private void button33_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"myxx({textBox7.Text},1)");
+            textBox8.Text += $"Outer_GoStraightPointByX({textBox7.Text});\n";
+        }
+
+        private void button34_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"mzxy({textBox7.Text},1)");
+            textBox8.Text += $"Outer_GoStraightPointByY({textBox7.Text});\n";
+        }
+
+        private void button35_Click(object sender, EventArgs e)
+        {
+            serialPort.WriteLine($"glrt(0,0)");
+        }
     }
 
     class DisplayData

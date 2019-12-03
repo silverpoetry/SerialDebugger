@@ -53,6 +53,7 @@
             this.button10 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.MPU = new System.Windows.Forms.GroupBox();
+            this.button32 = new System.Windows.Forms.Button();
             this.button26 = new System.Windows.Forms.Button();
             this.button25 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
@@ -80,12 +81,15 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.button34 = new System.Windows.Forms.Button();
+            this.button33 = new System.Windows.Forms.Button();
             this.button28 = new System.Windows.Forms.Button();
             this.button27 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button31 = new System.Windows.Forms.Button();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -97,8 +101,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.button29 = new System.Windows.Forms.Button();
-            this.button31 = new System.Windows.Forms.Button();
-            this.button32 = new System.Windows.Forms.Button();
+            this.button35 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -390,6 +393,17 @@
             this.MPU.TabStop = false;
             this.MPU.Text = "姿态";
             // 
+            // button32
+            // 
+            this.button32.Location = new System.Drawing.Point(348, 40);
+            this.button32.Margin = new System.Windows.Forms.Padding(4);
+            this.button32.Name = "button32";
+            this.button32.Size = new System.Drawing.Size(135, 48);
+            this.button32.TabIndex = 24;
+            this.button32.Text = "danlun";
+            this.button32.UseVisualStyleBackColor = true;
+            this.button32.Click += new System.EventHandler(this.button32_Click);
+            // 
             // button26
             // 
             this.button26.Location = new System.Drawing.Point(354, 40);
@@ -469,7 +483,7 @@
             this.button9.Location = new System.Drawing.Point(398, 143);
             this.button9.Margin = new System.Windows.Forms.Padding(4);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(176, 80);
+            this.button9.Size = new System.Drawing.Size(84, 80);
             this.button9.TabIndex = 27;
             this.button9.Text = "左转";
             this.button9.UseVisualStyleBackColor = true;
@@ -673,6 +687,8 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.button34);
+            this.groupBox5.Controls.Add(this.button33);
             this.groupBox5.Controls.Add(this.button28);
             this.groupBox5.Controls.Add(this.button27);
             this.groupBox5.Controls.Add(this.button17);
@@ -685,9 +701,29 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "上位机位置";
             // 
+            // button34
+            // 
+            this.button34.Location = new System.Drawing.Point(274, 26);
+            this.button34.Name = "button34";
+            this.button34.Size = new System.Drawing.Size(118, 43);
+            this.button34.TabIndex = 6;
+            this.button34.Text = "MpuY";
+            this.button34.UseVisualStyleBackColor = true;
+            this.button34.Click += new System.EventHandler(this.button34_Click);
+            // 
+            // button33
+            // 
+            this.button33.Location = new System.Drawing.Point(150, 26);
+            this.button33.Name = "button33";
+            this.button33.Size = new System.Drawing.Size(118, 43);
+            this.button33.TabIndex = 5;
+            this.button33.Text = "MpuX";
+            this.button33.UseVisualStyleBackColor = true;
+            this.button33.Click += new System.EventHandler(this.button33_Click);
+            // 
             // button28
             // 
-            this.button28.Location = new System.Drawing.Point(523, 52);
+            this.button28.Location = new System.Drawing.Point(523, 75);
             this.button28.Name = "button28";
             this.button28.Size = new System.Drawing.Size(118, 64);
             this.button28.TabIndex = 4;
@@ -697,7 +733,7 @@
             // 
             // button27
             // 
-            this.button27.Location = new System.Drawing.Point(398, 52);
+            this.button27.Location = new System.Drawing.Point(398, 75);
             this.button27.Name = "button27";
             this.button27.Size = new System.Drawing.Size(118, 64);
             this.button27.TabIndex = 3;
@@ -707,7 +743,7 @@
             // 
             // button17
             // 
-            this.button17.Location = new System.Drawing.Point(274, 51);
+            this.button17.Location = new System.Drawing.Point(274, 75);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(118, 64);
             this.button17.TabIndex = 2;
@@ -717,7 +753,7 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(150, 52);
+            this.button16.Location = new System.Drawing.Point(150, 75);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(118, 64);
             this.button16.TabIndex = 1;
@@ -749,6 +785,17 @@
             this.groupBox3.TabIndex = 48;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "电机时间";
+            // 
+            // button31
+            // 
+            this.button31.Location = new System.Drawing.Point(502, 121);
+            this.button31.Margin = new System.Windows.Forms.Padding(4);
+            this.button31.Name = "button31";
+            this.button31.Size = new System.Drawing.Size(120, 46);
+            this.button31.TabIndex = 41;
+            this.button31.Text = "GoStraight";
+            this.button31.UseVisualStyleBackColor = true;
+            this.button31.Click += new System.EventHandler(this.button31_Click);
             // 
             // radioButton4
             // 
@@ -798,6 +845,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button35);
             this.tabPage2.Controls.Add(this.groupBox6);
             this.tabPage2.Controls.Add(this.button11);
             this.tabPage2.Controls.Add(this.button14);
@@ -877,27 +925,16 @@
             this.button29.UseVisualStyleBackColor = true;
             this.button29.Click += new System.EventHandler(this.button29_Click);
             // 
-            // button31
+            // button35
             // 
-            this.button31.Location = new System.Drawing.Point(502, 121);
-            this.button31.Margin = new System.Windows.Forms.Padding(4);
-            this.button31.Name = "button31";
-            this.button31.Size = new System.Drawing.Size(120, 46);
-            this.button31.TabIndex = 41;
-            this.button31.Text = "GoStraight";
-            this.button31.UseVisualStyleBackColor = true;
-            this.button31.Click += new System.EventHandler(this.button31_Click);
-            // 
-            // button32
-            // 
-            this.button32.Location = new System.Drawing.Point(348, 40);
-            this.button32.Margin = new System.Windows.Forms.Padding(4);
-            this.button32.Name = "button32";
-            this.button32.Size = new System.Drawing.Size(135, 48);
-            this.button32.TabIndex = 24;
-            this.button32.Text = "danlun";
-            this.button32.UseVisualStyleBackColor = true;
-            this.button32.Click += new System.EventHandler(this.button32_Click);
+            this.button35.Location = new System.Drawing.Point(490, 143);
+            this.button35.Margin = new System.Windows.Forms.Padding(4);
+            this.button35.Name = "button35";
+            this.button35.Size = new System.Drawing.Size(84, 80);
+            this.button35.TabIndex = 50;
+            this.button35.Text = "右转";
+            this.button35.UseVisualStyleBackColor = true;
+            this.button35.Click += new System.EventHandler(this.button35_Click);
             // 
             // Form1
             // 
@@ -1019,6 +1056,9 @@
         private System.Windows.Forms.Button button29;
         private System.Windows.Forms.Button button31;
         private System.Windows.Forms.Button button32;
+        private System.Windows.Forms.Button button34;
+        private System.Windows.Forms.Button button33;
+        private System.Windows.Forms.Button button35;
     }
 }
 
