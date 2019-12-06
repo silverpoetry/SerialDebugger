@@ -14,25 +14,27 @@ using Drawer;
 
 namespace SerialDebugger
 {
-   
-   
+    public delegate void MessageReceive(string str);
+  
     public partial class Form1 : Form
     {
+        public MessageReceive OnMessageReceive;
+        
         List<DisplayData> d = new List<DisplayData>();
         Hashtable hasharrange = new Hashtable();
        public SerialPort serialPort;
-
+        public Form3 f3 ;
 
         public Form1()
         {
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             //注册点击事件
-            foreach (Control item in this.Controls)
-            {
-               item.KeyDown += Form1_KeyDown;
-                item.KeyUp += (a, b) => { if (b.KeyCode == Keys.Up || b.KeyCode == Keys.Down || b.KeyCode == Keys.Left || b.KeyCode == Keys.Right) serialPort.WriteLine("fwd(0,0)"); };
-            }
+            //foreach (Control item in this.Controls)
+            //{
+            //  // item.KeyDown += Form1_KeyDown;
+            //  //  item.KeyUp += (a, b) => { if (b.KeyCode == Keys.Up || b.KeyCode == Keys.Down || b.KeyCode == Keys.Left || b.KeyCode == Keys.Right) serialPort.WriteLine("fwd(0,0)"); };
+            //}
             
            
         }
@@ -155,9 +157,13 @@ namespace SerialDebugger
             {
                 while (serialPort.BytesToRead>0)
                 {
-
                
                 string command = serialPort.ReadLine();
+                    if (OnMessageReceive != null)
+                    {
+                        
+                        OnMessageReceive(command);
+                    }
                 string commandname = command.Substring(0, command.LastIndexOf('('));
                 string[] parameters = command.Substring(command.LastIndexOf('(') + 1, command.LastIndexOf(')') - command.LastIndexOf('(') - 1).Split(',');
                 switch (commandname)
@@ -289,8 +295,8 @@ namespace SerialDebugger
 
         private void button4_Click_1(object sender, EventArgs e)
         {
-          //  serialPort.WriteLine($"fwd({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
-            serialPort.WriteLine($"bmpspeed({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
+            serialPort.WriteLine($"fwd({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
+           // serialPort.WriteLine($"bmpspeed({Convert.ToInt32(textBox2.Text).ToString()},{Convert.ToInt32(textBox3.Text).ToString()})");
 
         }
 
@@ -480,7 +486,7 @@ namespace SerialDebugger
 
         private void button26_Click(object sender, EventArgs e)
         {
-            serialPort.WriteLine($"abt({textBox6.Text},1)");
+            serialPort.WriteLine($"abtr({textBox6.Text},1)");
         }
 
         private void button25_Click(object sender, EventArgs e)
@@ -601,6 +607,34 @@ namespace SerialDebugger
         private void button35_Click(object sender, EventArgs e)
         {
             serialPort.WriteLine($"glrt(0,0)");
+        }
+
+        private void button37_Click(object sender, EventArgs e)
+        {
+            Form3 f = new Form3();
+            f.fm1 = this;
+            f.Show();
+        }
+        
+        private void button36_Click(object sender, EventArgs e)
+        {
+
+            serialPort.WriteLine($"abtl({textBox6.Text},1)");
+        }
+
+        private void textBox14_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button38_Click(object sender, EventArgs e)
+        {
+            OnMessageReceive($"stpos({textBox13.Text},{textBox14.Text})");
+        }
+
+        private void button39_Click(object sender, EventArgs e)
+        {
+            OnMessageReceive($"stob({textBox16.Text},{textBox17.Text},{textBox15.Text})");
         }
     }
 
